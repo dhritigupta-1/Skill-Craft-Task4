@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TaskFlow — 3D Task Manager</title>
+  <meta name="description" content="A premium 3D to-do app to organize your tasks with lists, due dates, and beautiful animations." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Floating background orbs -->
+  <div class="bg-orbs">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <!-- App Shell -->
+  <div class="app-shell" id="appShell">
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">
+          <div class="logo-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M9 11l3 3L22 4"/>
+              <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+            </svg>
+          </div>
+          <span class="logo-text">TaskFlow</span>
+        </div>
+        <button class="sidebar-toggle" id="sidebarToggle" title="Collapse Sidebar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M11 19l-7-7 7-7M18 19l-7-7 7-7"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Quick Stats -->
+      <div class="quick-stats">
+        <div class="stat-card stat-total">
+          <span class="stat-number" id="statTotal">0</span>
+          <span class="stat-label">Total</span>
+        </div>
+        <div class="stat-card stat-done">
+          <span class="stat-number" id="statDone">0</span>
+          <span class="stat-label">Done</span>
+        </div>
+        <div class="stat-card stat-pending">
+          <span class="stat-number" id="statPending">0</span>
+          <span class="stat-label">Pending</span>
+        </div>
+      </div>
+
+      <!-- Lists Section -->
+      <div class="sidebar-section">
+        <div class="section-header">
+          <span>My Lists</span>
+          <button class="btn-add-list" id="btnAddList" title="New List">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </button>
+        </div>
+        <ul class="lists-nav" id="listsNav"></ul>
+      </div>
+
+      <!-- Filter Section -->
+      <div class="sidebar-section">
+        <div class="section-header"><span>Filter By</span></div>
+        <ul class="filter-nav">
+          <li class="filter-item active" data-filter="all" id="filterAll">
+            <span class="filter-icon">📋</span><span>All Tasks</span>
+          </li>
+          <li class="filter-item" data-filter="today" id="filterToday">
+            <span class="filter-icon">☀️</span><span>Today</span>
+          </li>
+          <li class="filter-item" data-filter="upcoming" id="filterUpcoming">
+            <span class="filter-icon">📅</span><span>Upcoming</span>
+          </li>
+          <li class="filter-item" data-filter="completed" id="filterCompleted">
+            <span class="filter-icon">✅</span><span>Completed</span>
+          </li>
+          <li class="filter-item" data-filter="overdue" id="filterOverdue">
+            <span class="filter-icon">⚠️</span><span>Overdue</span>
+          </li>
+        </ul>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content" id="mainContent">
+
+      <!-- Top Bar -->
+      <header class="top-bar">
+        <div class="top-bar-left">
+          <button class="mobile-menu-btn" id="mobileMenuBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+            </svg>
+          </button>
+          <div class="page-title-wrap">
+            <h1 class="page-title" id="pageTitle">All Tasks</h1>
+            <span class="task-count-badge" id="taskCountBadge">0 tasks</span>
+          </div>
+        </div>
+        <div class="top-bar-right">
+          <div class="search-wrap">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <input type="text" class="search-input" id="searchInput" placeholder="Search tasks…" />
+          </div>
+          <div class="sort-wrap">
+            <select class="sort-select" id="sortSelect">
+              <option value="created">Date Created</option>
+              <option value="dueDate">Due Date</option>
+              <option value="priority">Priority</option>
+              <option value="name">Name A–Z</option>
+            </select>
+          </div>
+        </div>
+      </header>
+
+      <!-- Progress Bar -->
+      <div class="progress-wrap" id="progressWrap">
+        <div class="progress-info">
+          <span id="progressText">0% completed</span>
+          <span id="progressFraction">0 / 0</span>
+        </div>
+        <div class="progress-bar-track">
+          <div class="progress-bar-fill" id="progressBarFill"></div>
+        </div>
+      </div>
+
+      <!-- Add Task Button -->
+      <div class="add-task-bar">
+        <button class="btn-add-task" id="btnAddTask">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add Task
+        </button>
+      </div>
+
+      <!-- Task Grid -->
+      <div class="task-grid" id="taskGrid">
+        <!-- Tasks rendered by JS -->
+      </div>
+
+      <!-- Empty State -->
+      <div class="empty-state" id="emptyState" style="display:none;">
+        <div class="empty-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M9 11l3 3L22 4"/>
+            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+          </svg>
+        </div>
+        <h3>No tasks yet</h3>
+        <p>Click <strong>Add Task</strong> to get started</p>
+      </div>
+    </main>
+  </div>
+
+  <!-- ===== MODALS ===== -->
+
+  <!-- Add/Edit Task Modal -->
+  <div class="modal-overlay" id="taskModal" style="display:none;">
+    <div class="modal-card" id="taskModalCard">
+      <div class="modal-header">
+        <h2 class="modal-title" id="taskModalTitle">New Task</h2>
+        <button class="modal-close" id="taskModalClose">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="taskName">Task Name <span class="required">*</span></label>
+          <input type="text" id="taskName" class="form-input" placeholder="What needs to be done?" maxlength="120" />
+        </div>
+        <div class="form-group">
+          <label for="taskDesc">Description</label>
+          <textarea id="taskDesc" class="form-textarea" placeholder="Add details…" rows="3"></textarea>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="taskList">List</label>
+            <select id="taskList" class="form-input"></select>
+          </div>
+          <div class="form-group">
+            <label for="taskPriority">Priority</label>
+            <select id="taskPriority" class="form-input">
+              <option value="low">🟢 Low</option>
+              <option value="medium" selected>🟡 Medium</option>
+              <option value="high">🔴 High</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="taskDate">Due Date</label>
+            <input type="date" id="taskDate" class="form-input" />
+          </div>
+          <div class="form-group">
+            <label for="taskTime">Due Time</label>
+            <input type="time" id="taskTime" class="form-input" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Tags</label>
+          <div class="tags-input-wrap" id="tagsInputWrap">
+            <div class="tags-list" id="tagsList"></div>
+            <input type="text" id="tagInput" class="tag-input-field" placeholder="Add tag & press Enter" />
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" id="taskModalCancel">Cancel</button>
+        <button class="btn btn-primary" id="taskModalSave">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+          Save Task
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add List Modal -->
+  <div class="modal-overlay" id="listModal" style="display:none;">
+    <div class="modal-card modal-card-sm" id="listModalCard">
+      <div class="modal-header">
+        <h2 class="modal-title">New List</h2>
+        <button class="modal-close" id="listModalClose">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="listName">List Name <span class="required">*</span></label>
+          <input type="text" id="listName" class="form-input" placeholder="e.g. Work, Personal…" maxlength="40" />
+        </div>
+        <div class="form-group">
+          <label>Color</label>
+          <div class="color-picker" id="colorPicker">
+            <button class="color-btn active" data-color="#6C63FF" style="background:#6C63FF"></button>
+            <button class="color-btn" data-color="#FF6584" style="background:#FF6584"></button>
+            <button class="color-btn" data-color="#43D9AD" style="background:#43D9AD"></button>
+            <button class="color-btn" data-color="#FFB547" style="background:#FFB547"></button>
+            <button class="color-btn" data-color="#4FC3F7" style="background:#4FC3F7"></button>
+            <button class="color-btn" data-color="#CE93D8" style="background:#CE93D8"></button>
+            <button class="color-btn" data-color="#F06292" style="background:#F06292"></button>
+            <button class="color-btn" data-color="#81C784" style="background:#81C784"></button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" id="listModalCancel">Cancel</button>
+        <button class="btn btn-primary" id="listModalSave">Create List</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Confirm Modal -->
+  <div class="modal-overlay" id="deleteModal" style="display:none;">
+    <div class="modal-card modal-card-sm">
+      <div class="modal-header">
+        <h2 class="modal-title">Delete Task</h2>
+        <button class="modal-close" id="deleteModalClose">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p class="confirm-text">Are you sure you want to delete <strong id="deleteTaskName"></strong>? This action cannot be undone.</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" id="deleteModalCancel">Cancel</button>
+        <button class="btn btn-danger" id="deleteModalConfirm">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+          Delete
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="toast"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
